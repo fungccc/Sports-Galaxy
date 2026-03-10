@@ -203,10 +203,28 @@ function init() {
                 details.textContent = item.detail; // 或是顯示 `Mode ${i+1}`
                 element.appendChild(details);
 
-                // 點擊事件
-                element.addEventListener('pointerdown', () => {
-                    window.location.href = `atlas.html?sport=${item.id}`;
-                });
+//                // 點擊事件
+//                element.addEventListener('pointerdown', () => {
+//                    window.location.href = `atlas.html?sport=${item.id}`;
+//                });
+// 點擊事件 (修正手機端滑動與點擊衝突)
+let startX = 0;
+let startY = 0;
+
+element.addEventListener('pointerdown', (e) => {
+    startX = e.clientX;
+    startY = e.clientY;
+});
+
+element.addEventListener('pointerup', (e) => {
+    const diffX = Math.abs(e.clientX - startX);
+    const diffY = Math.abs(e.clientY - startY);
+    
+    // 如果手指移動距離小於 5 像素，才判定為「點擊」跳轉
+    if (diffX < 5 && diffY < 5) {
+        window.location.href = `atlas.html?sport=${item.id}`;
+    }
+});
 
                 const objectCSS = new CSS3DObject(element);
                 scene.add(objectCSS);
