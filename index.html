@@ -2,827 +2,292 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anatomy Master V6.9 (Running Edition)</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Sports Planet - Anatomy Master</title>
     <style>
-        :root {
-            --primary: #00796B;
-            --primary-hover: #004D40;
-            --success: #2ECC71;
-            --error: #E74C3C;
-            --bg: #f5f7fa;
-            --card: #ffffff;
-            --text: #2c3e50;
-            --text-sec: #7f8c8d;
-            --border: #e0e0e0;
-            --fab-color: #34495e;
-            --review-color: #8e44ad;
-            --option-bg: #ffffff;
-            --option-hover: #e0f2f1;
-            
-            /* 分類標籤顏色 */
-            --tag-a: #E8F5E9; --tag-b: #E3F2FD; --tag-c: #FFF3E0; --tag-text: #455A64;
+        body {
+            margin: 0;
+            background-color: #050505;
+            background-image: radial-gradient(ellipse at center,  #1b2735 0%, #090a0f 100%);
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        [data-theme="dark"] {
-            --primary: #4DB6AC; --primary-hover: #80CBC4; --success: #27ae60; --error: #c0392b;
-            --bg: #1a202c; --card: #2d3748; --text: #f7fafc; --text-sec: #a0aec0; --border: #4a5568;
-            --fab-color: #4a5568; --review-color: #9b59b6; --option-bg: #2d3748; --option-hover: #4a5568;
-            --tag-a: #1B5E20; --tag-b: #0D47A1; --tag-c: #E65100; --tag-text: #E0E0E0;
+        /* 強制容器滿版，避免 3D 內容看不見 */
+        #container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
 
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 90px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box; transition: background-color 0.3s; }
-        .container { background: var(--card); border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 100%; max-width: 600px; padding: 30px; text-align: center; position: relative; }
-        h1 { margin-bottom: 5px; font-size: 28px; color: var(--primary); }
-        .subtitle { color: var(--text-sec); margin-bottom: 20px; font-size: 14px; }
-        
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 5px 0; width: 100%; display: block; font-weight: bold; transition: transform 0.1s; }
-        .btn:hover { transform: translateY(-2px); opacity: 0.95; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: rgba(0, 121, 107, 0.1); }
-        .btn-sm { padding: 8px 15px; font-size: 14px; width: auto; display: inline-block; }
-        .btn-xs { padding: 2px 8px; font-size: 11px; border-radius: 10px; cursor: pointer; border: 1px solid var(--text-sec); background: transparent; color: var(--text-sec); margin-left: 10px; }
-        .btn-xs:hover { background: var(--text-sec); color: white; }
+        /* 3D 卡片樣式 */
+        .element {
+            width: 140px;
+            height: 180px;
+            box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+            border: 1px solid rgba(127,255,255,0.25);
+            background-color: rgba(0,127,127,0.3);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            user-select: none; /* 防止文字被選取 */
+        }
 
-        .image-container { width: 100%; height: 260px; background: #eee; margin: 15px 0; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border); position: relative; }
-        .quiz-img { max-width: 100%; max-height: 100%; object-fit: contain; transition: filter 0.3s; }
-        .blur-img { filter: blur(20px); opacity: 0.6; }
+        .element:hover {
+            box-shadow: 0px 0px 20px rgba(0,255,255,0.8);
+            border: 1px solid rgba(127,255,255,0.75);
+            background-color: rgba(0,127,127,0.6);
+            transform: scale(1.1);
+            z-index: 100;
+        }
 
-        .option-btn { background: var(--option-bg); border: 2px solid var(--border); color: var(--text); margin-bottom: 10px; text-align: left; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-        .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
-        .option-btn.wrong { background: var(--error); color: white; border-color: var(--error); }
+        .element .icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0,255,255,0.5);
+        }
 
-        .tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 15px; }
-        .tab { flex: 1; padding: 10px; cursor: pointer; color: var(--text-sec); border-bottom: 3px solid transparent; }
-        .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: bold; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .element .number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: rgba(127,255,255,0.75);
+        }
 
-        .hidden { display: none !important; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center; }
-        .modal-content { background: var(--card); width: 90%; max-width: 500px; border-radius: 12px; padding: 20px; max-height: 85vh; overflow-y: auto; text-align: left; color: var(--text); }
-        
-        textarea, input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); box-sizing: border-box; }
-        textarea { height: 120px; font-family: monospace; }
-        
-        .theme-toggle { position: fixed; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; z-index: 100; }
-        
-        /* Footer Styling */
-        .footer-tools { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; pointer-events: none; z-index: 50; padding-bottom: 20px; background: linear-gradient(to top, var(--bg) 60%, transparent); }
-        .tool-btn { background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; pointer-events: auto; backdrop-filter: blur(4px); font-size: 0.85rem; }
-        .brand-credit { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 8px; text-shadow: 0 1px 2px rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 1px; }
-        [data-theme="dark"] .brand-credit { text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        
-        /* Filters */
-        .filter-section { margin-bottom: 15px; text-align: left; }
-        .filter-header { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; color: var(--text); display: flex; align-items: center; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
-        .checkbox-label { padding: 4px 10px; border-radius: 15px; border: 1px solid var(--border); font-size: 0.85rem; display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; color: var(--tag-text); transition: all 0.2s; }
-        .cat-a .checkbox-label { background-color: var(--tag-a); } .cat-b .checkbox-label { background-color: var(--tag-b); } .cat-c .checkbox-label { background-color: var(--tag-c); }
-        .checkbox-label:hover { filter: brightness(0.95); border-color: var(--primary); }
-        .tag-pill { display: inline-block; background: var(--border); color: var(--text-sec); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 5px; margin-top: 5px; }
+        .element .symbol {
+            font-size: 24px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 0 10px rgba(0,255,255,0.95);
+        }
 
-        .switch { position: relative; display: inline-block; width: 40px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(16px); }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .element .details {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            font-size: 12px;
+            color: rgba(127,255,255,0.75);
+        }
 
-        .stats { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-sec); font-size: 0.9rem; }
-        .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
-        .progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.3s; }
-        .fab-container { position: fixed; bottom: 100px; right: 20px; z-index: 90; }
-        .fab-btn { width: 56px; height: 56px; border-radius: 50%; background: var(--fab-color); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; }
-        .badge { position: absolute; top: -5px; right: -5px; background: var(--error); color: white; font-size: 10px; padding: 4px 7px; border-radius: 10px; display: none; }
-        
-        .feedback { margin-top: 15px; padding: 15px; border-radius: 8px; display: none; text-align: left; border: 1px solid var(--border); }
-        .feedback.success { background: rgba(46, 204, 113, 0.1); border-color: var(--success); }
-        .feedback.error { background: rgba(231, 76, 60, 0.1); border-color: var(--error); }
+        /* 介面層級設定 */
+        #menu {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            z-index: 10; /* 比 container 高 */
+            pointer-events: none;
+        }
+        h1 {
+            font-weight: 200;
+            letter-spacing: 5px;
+            margin: 0;
+            text-shadow: 0 0 15px #00ffff;
+        }
+        p { color: rgba(127,255,255,0.5); margin-top: 5px; }
+
+        #controls-hint {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: rgba(127,255,255,0.4);
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
 
-<button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-
-<div class="container">
-    
-    <div id="screen-home">
-        <h1>Running Anatomy</h1>
-        <p class="subtitle">V6.9 (Running Edition)</p>
-        
-        <div style="background:rgba(0,0,0,0.03); padding:15px; border-radius:10px; text-align:left; margin-bottom:20px; max-height:400px; overflow-y:auto; border:1px solid var(--border);">
-            <div style="font-weight:bold; font-size:1rem; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-                <span>🎯 練習目標 (Practice Goals)</span>
-                <button class="btn-xs" style="font-size:12px; padding:4px 10px;" onclick="toggleGlobalAll()">Toggle All</button>
-            </div>
-            <div id="filter-container"></div>
-        </div>
-
-        <button class="btn" onclick="selectTime(300)">⏱️ 5 分鐘挑戰</button>
-        <button class="btn" onclick="selectTime(900)">⏱️ 15 分鐘挑戰</button>
-        <button class="btn btn-outline" onclick="selectTime(-1)">♾️ 不限時練習</button>
-        
-        <div style="margin-top:20px; font-size:0.9rem; color:var(--text-sec);">
-            最高分紀錄 (5m): <span id="home-best-5m" style="color:var(--primary)">0</span>
-        </div>
-
-        <div style="margin-top:25px; padding-top:15px; border-top:1px dashed var(--border);">
-            <button class="btn btn-outline btn-sm" onclick="openImportModal()" style="color:var(--text-sec); border-color:var(--border);">
-                📂 Data Manager
-            </button>
-        </div>
-
+    <div id="menu">
+        <h1>SPORTS GALAXY</h1>
+        <p>Select your training mode</p>
     </div>
 
-    <div id="screen-settings" class="hidden">
-        <h2>Settings</h2>
-        
-        <div style="background:var(--card); border:1px solid var(--border); padding:15px; border-radius:8px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-            <div style="text-align:left;">
-                <div style="font-weight:bold;">🎧 懶人聽書 (Auto Play)</div>
-                <div style="font-size:0.8rem; color:var(--text-sec);">全自動播放與翻牌。</div>
-            </div>
-            <label class="switch"><input type="checkbox" id="passive-toggle"><span class="slider"></span></label>
-        </div>
+    <div id="container"></div>
 
-        <div style="background:var(--card); border:1px solid var(--border); padding:15px; border-radius:8px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-            <div style="text-align:left;">
-                <div style="font-weight:bold;">👂 聽力測驗 (Blind Mode)</div>
-                <div style="font-size:0.8rem; color:var(--text-sec);">隱藏圖片，聽音辨位。</div>
-            </div>
-            <label class="switch"><input type="checkbox" id="dictation-toggle"><span class="slider"></span></label>
-        </div>
-
-        <p style="font-weight:bold;">選擇語言 (Language):</p>
-        <button class="btn" onclick="startGame('zh')"> 中文模式</button>
-        <button class="btn" onclick="startGame('en')"> English Mode</button>
-        <button class="btn btn-outline" onclick="goHome()">↩️ 返回 (Back)</button>
+    <div id="controls-hint">
+        🖱️ 拖曳旋轉 • 滾輪縮放 • 點擊選擇
     </div>
 
-    <div id="screen-quiz" class="hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span id="timer-display" style="font-family:monospace; font-weight:bold; font-size:1.2rem; color:var(--primary)">00:00</span>
-            <div style="display:flex; gap:10px; align-items:center;">
-                <button id="pause-btn" class="hidden" onclick="togglePause()" style="border:none; background:var(--primary); color:white; border-radius:4px; padding:2px 8px; cursor:pointer;">⏸️</button>
-                <span id="mode-badge" style="background:#eee; padding:2px 8px; border-radius:4px; font-size:0.8rem;">Manual</span>
-            </div>
-        </div>
-
-        <div class="stats">
-            <span id="score-display">✅ 0</span>
-            <span id="progress-text">Q: 1</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-bar-fill"></div></div>
-
-        <div class="image-container">
-            <img src="" class="quiz-img" id="question-img" alt="Anatomy">
-            <button onclick="playFullSequence()" style="position:absolute; bottom:10px; right:10px; width:40px; height:40px; border-radius:50%; border:none; background:rgba(255,255,255,0.9); font-size:20px; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2);">🔊</button>
-        </div>
-
-        <div id="options-container"></div>
-
-        <div id="feedback-area" class="feedback">
-            <h3 id="fb-title" style="margin:0 0 5px 0;"></h3>
-            <div id="fb-content"></div>
-        </div>
-
-        <button id="next-btn" class="btn hidden" style="margin-top:15px; background:#34495e;" onclick="forceNext()">➡ Next</button>
-        <button class="btn btn-outline" style="margin-top:10px;" onclick="endGame(false)">Exit Game</button>
-    </div>
-
-    <div id="screen-result" class="hidden">
-        <h1>Finished!</h1>
-        <div style="font-size:4rem; font-weight:bold; color:var(--primary);" id="final-score">0</div>
-        <p>Correct Answers</p>
-        <button class="btn" onclick="goHome()">🏠 Home</button>
-        <button class="btn btn-outline" onclick="openMistakesModal()">📝 Review Mistakes</button>
-    </div>
-
-</div>
-
-<div class="fab-container hidden" id="fab-mistakes">
-    <button class="fab-btn" onclick="openMistakesModal()">📝</button>
-    <span class="badge" id="mistake-badge">0</span>
-</div>
-
-<div class="footer-tools" id="main-footer">
-    <div class="brand-credit">豐狂出品 • 跑者解剖室</div>
-</div>
-
-<div class="modal-overlay" id="import-modal">
-    <div class="modal-content">
-        <h3 style="margin-top:0;">Data Manager</h3>
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('tab-json')">📋 文字</div>
-            <div class="tab" onclick="switchTab('tab-file')">📂 檔案</div>
-            <div class="tab" onclick="switchTab('tab-url')">🌐 URL</div>
-        </div>
-
-        <div id="tab-json" class="tab-content active">
-            <p style="font-size:0.85rem; color:var(--text-sec);">貼上 JSON:</p>
-            <textarea id="import-text"></textarea>
-            <button class="btn btn-sm" onclick="importFromText()">匯入 (Import)</button>
-        </div>
-
-        <div id="tab-file" class="tab-content">
-            <input type="file" id="file-input" accept=".json" style="margin-bottom:15px;">
-            <button class="btn btn-sm" onclick="importFromFile()">讀取 (Load)</button>
-        </div>
-
-        <div id="tab-url" class="tab-content">
-            <input type="text" id="url-input" placeholder="https://..." style="margin-bottom:15px;">
-            <button class="btn btn-sm" onclick="importFromUrl()">下載 (Fetch)</button>
-        </div>
-
-        <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px; text-align:right;">
-            <button class="btn btn-outline btn-sm" style="border-color:var(--error); color:var(--error); float:left;" onclick="resetData()">↺ 重置</button>
-            <button class="btn btn-outline btn-sm" onclick="closeImportModal()">關閉</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="mistake-modal">
-    <div class="modal-content">
-        <h3>My Mistakes</h3>
-        <div id="mistakes-list" style="margin-bottom:15px;"></div>
-        <button class="btn" style="background:var(--review-color)" onclick="startReviewMode()">🔄 Review Mistakes</button>
-        <button class="btn btn-outline" onclick="closeMistakesModal()">Close</button>
-    </div>
-</div>
-
-<script>
-    // --- 1. TAXONOMY CONFIGURATION ---
-    const taxonomy = {
-        "A. 解剖位置 (Anatomy)": [
-            "頭頸部", "顱骨與顳顎關節", "頸椎", "頸部肌群",
-            "背部與脊柱", "脊柱骨骼", "背部肌群", "脊柱韌帶",
-            "上肢", "肩帶與肩關節", "上臂", "肘部與前臂", "手腕與手部",
-            "軀幹", "胸廓", "腹部與核心", "骨盆帶",
-            "下肢", "髖部與大腿", "膝關節", "小腿", "踝部與足部"
-        ],
-        "B. 運動專項 (Sports)": [
-            "跑步", "籃球", "足球", "健身/重訓", "羽毛球", "游泳", 
-            "HIIT/CrossFit", "瑜伽", "單車", "網球", "排球", 
-            "棒球/壘球", "高爾夫", "攀岩/抱石", "皮拉提斯", 
-            "拳擊/格鬥", "桌球", "登山/健行", "衝浪", "滑雪"
-        ],
-        "C. 功能與動作 (Function)": [
-            "下肢推", "下肢拉/髖絞鍊", "上肢推-水平", "上肢推-垂直", 
-            "上肢拉-水平", "上肢拉-垂直", "軀幹旋轉與對角線", "步態與移動",
-            "屈曲", "伸展", "外展", "內收", "內旋", "外旋", "側屈", "旋後/旋前", 
-            "提升/下壓", "背屈/蹠屈",
-            "原動肌", "穩定肌", "核心穩定", "呼吸輔助", "姿勢維持", "衝擊吸收"
-        ]
-    };
-
-    // --- 2. DEFAULT DATA ---
-    const defaultData = [
-        { 
-            id: "l01", name_en: "Gluteus Maximus", name_zh: "臀大肌", 
-            tags: ["髖部與大腿", "跑步", "排球", "游泳", "伸展", "外旋", "下肢推", "原動肌"], 
-            img: "https://commons.wikimedia.org/wiki/Special:FilePath/Gluteus_maximus.png", 
-            desc: "人體最大肌肉。負責髖關節伸展(跑步推進)、外旋及維持直立。",
-            desc_en: "The largest muscle in the body. Responsible for hip extension (running propulsion), external rotation, and maintaining upright posture.",
-            img_source: "圖片來源：由 Wikimedia Commons 提供"
-        }
-    ];
-
-    // --- 3. STATE ---
-    let db = [];
-    let currentPool = [], currentQ = null, mistakes = [];
-    let config = { time: 0, lang: 'zh', dictation: false, passive: false, review: false };
-    let timers = { game: null, auto: null, passive: null };
-    let gameState = { score: 0, count: 0, active: false, isPaused: false };
-
-    // --- 4. INIT ---
-    window.onload = async () => {
-        initTheme();
-        await loadData();
-        renderCategorizedFilters();
-        document.getElementById('import-text').value = JSON.stringify(db, null, 2);
-    };
-
-    function initTheme() {
-        const t = localStorage.getItem('theme') || 'light';
-        document.body.dataset.theme = t;
-    }
-    function toggleTheme() {
-        const n = document.body.dataset.theme === 'light' ? 'dark' : 'light';
-        document.body.dataset.theme = n;
-        localStorage.setItem('theme', n);
-    }
-    
-async function loadData() {
-        try {
-            // 設定您的 JSON 檔案路徑 (請確保伺服器上有這個資料夾與檔案)
-            const response = await fetch('db/anatomy_data_Running.json');
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            db = await response.json();
-            console.log("✅ 成功載入外部資料: db/anatomy_data_Running.json");
-
-        } catch (error) {
-            console.warn("⚠️ 無法讀取外部檔案 (可能是離線或路徑錯誤)，切換回 LocalStorage 或預設資料:", error);
-            
-            // 備案：讀取失敗時，嘗試從 LocalStorage 或使用預設資料
-            const d = localStorage.getItem('anatomy_db_v68');
-            db = d ? JSON.parse(d) : JSON.parse(JSON.stringify(defaultData));
-        }
-
-        // --- 資料處理與標籤兼容性 (保持不變) ---
-        db.forEach(item => {
-            if (!item.tags && item.cat) item.tags = [item.cat];
-            else if (!item.tags) item.tags = ["Other"];
-        });
-
-        // --- 讀取使用者的錯誤紀錄與分數 (這部分一定要讀 LocalStorage) ---
-        const m = localStorage.getItem('anatomy_mistakes_v68');
-        mistakes = m ? JSON.parse(m) : [];
-        updateBadge();
-        const stats = JSON.parse(localStorage.getItem('anatomy_stats_v68') || '{}');
-        document.getElementById('home-best-5m').innerText = stats['300'] || 0;
-    }
-
-    // --- 5. RENDER FILTERS ---
-    function renderCategorizedFilters() {
-        const container = document.getElementById('filter-container');
-        container.innerHTML = '';
-        const dbTags = new Set();
-        db.forEach(item => { if(Array.isArray(item.tags)) item.tags.forEach(t => dbTags.add(t)); });
-
-        const createSection = (title, tagList, cssClass) => {
-            const existingTags = tagList.filter(t => dbTags.has(t));
-            if (existingTags.length === 0) return;
-            const sectionDiv = document.createElement('div');
-            sectionDiv.className = `filter-section ${cssClass}`;
-            const header = document.createElement('div');
-            header.className = 'filter-header';
-            header.innerHTML = `<span>${title}</span>`;
-            const btnAll = document.createElement('button');
-            btnAll.className = 'btn-xs';
-            btnAll.innerText = '☑ 全選';
-            btnAll.onclick = () => toggleSection(sectionDiv);
-            header.appendChild(btnAll);
-            sectionDiv.appendChild(header);
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'checkbox-group';
-            existingTags.forEach(tag => {
-                const lbl = document.createElement('label');
-                lbl.className = 'checkbox-label';
-                lbl.innerHTML = `<input type="checkbox" value="${tag}" checked onchange="autoSelectRelated(this.value, this.checked)"> ${tag}`;
-                groupDiv.appendChild(lbl);
-                dbTags.delete(tag);
-            });
-            sectionDiv.appendChild(groupDiv);
-            container.appendChild(sectionDiv);
-        };
-        createSection("A. 解剖位置 (Anatomy)", taxonomy["A. 解剖位置 (Anatomy)"], "cat-a");
-        createSection("B. 運動專項 (Sports)", taxonomy["B. 運動專項 (Sports)"], "cat-b");
-        createSection("C. 功能與動作 (Function)", taxonomy["C. 功能與動作 (Function)"], "cat-c");
-
-        if (dbTags.size > 0) {
-            const sectionDiv = document.createElement('div');
-            sectionDiv.className = 'filter-section';
-            sectionDiv.innerHTML = `<div class="filter-header"><span>Others</span></div>`;
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'checkbox-group';
-            Array.from(dbTags).sort().forEach(tag => {
-                const lbl = document.createElement('label');
-                lbl.className = 'checkbox-label';
-                 lbl.innerHTML = `<input type="checkbox" value="${tag}" checked onchange="autoSelectRelated(this.value, this.checked)"> ${tag}`;
-                groupDiv.appendChild(lbl);
-            });
-            sectionDiv.appendChild(groupDiv);
-            container.appendChild(sectionDiv);
-        }
-    }
-    function toggleSection(sectionDiv) {
-        const cbs = sectionDiv.querySelectorAll('input[type="checkbox"]');
-        if(cbs.length === 0) return;
-        const allChecked = Array.from(cbs).every(cb => cb.checked);
-        cbs.forEach(cb => cb.checked = !allChecked);
-    }
-    function toggleGlobalAll() {
-        const cbs = document.querySelectorAll('#filter-container input[type="checkbox"]');
-        const allChecked = Array.from(cbs).every(cb => cb.checked);
-        cbs.forEach(cb => cb.checked = !allChecked);
-    }
-
-    // 新增一個輔助函式：判斷某個標籤屬於哪個分類
-    function getTagCategory(tag) {
-        // taxonomy 是全域變數，直接讀取
-        for (const [categoryName, tags] of Object.entries(taxonomy)) {
-            if (tags.includes(tag)) {
-                return categoryName; // 回傳例如 "A. 解剖位置 (Anatomy)"
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://esm.sh/three@0.160.0",
+                "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/"
             }
         }
-        return "Others"; // 如果都不在預設分類中，歸類為 Others
-    }
+    </script>
 
-    // 修改後的自動勾選邏輯
-    function autoSelectRelated(tagName, isChecked) {
-        if (!isChecked) return;
+    <script type="module">
+        import * as THREE from 'three';
+        // 修正 2: TWEEN 的路徑與引入方式修正 (移除 .min 並使用 default import)
+        import TWEEN from 'three/addons/libs/tween.module.js';
+        import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+        import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
-        // 1. 先找出「觸發者」屬於哪個分類 (例如 A區)
-        const sourceCategory = getTagCategory(tagName);
+const sportsList = [
+    { id: "Running", icon: "🏃", name: "Run", detail: "Running" },
+    { id: "Basketball", icon: "🏀", name: "Bball", detail: "Basketball" },
+    { id: "Football", icon: "⚽", name: "Fball", detail: "Football" },
+    { id: "Badminton", icon: "🏸", name: "Badm", detail: "Badminton" },
+    { id: "Hiking", icon: "🥾", name: "Hike", detail: "Hiking" },
+    { id: "Combat", icon: "🥋", name: "MMA", detail: "Combat" },
+    { id: "Boxing", icon: "🥊", name: "Box", detail: "Boxing" },
+    { id: "Gym", icon: "🏋️", name: "Gym", detail: "Weight Training" },
+    { id: "Hiit", icon: "🔥", name: "HIIT", detail: "CrossFit" },
+    { id: "Cycling", icon: "🚴", name: "Bike", detail: "Cycling" },
+    { id: "Tennis", icon: "🎾", name: "Ten", detail: "Tennis" },
+    { id: "Climbing", icon: "🧗", name: "Climb", detail: "Bouldering" },
+    { id: "Swimming", icon: "🏊", name: "Swim", detail: "Swimming" },
+    { id: "Yoga", icon: "🧘", name: "Yoga", detail: "Mindfulness" },
+    { id: "Pilates", icon: "🤸", name: "Pila", detail: "Pilates" },
+    { id: "Baseball", icon: "⚾", name: "Base", detail: "Baseball" },
+    { id: "Surfing", icon: "🏄", name: "Surf", detail: "Surfing" }
+];
+        let camera, scene, renderer;
+        let controls;
+        const objects = [];
+        const targets = { sphere: [] };
 
-        // 2. 找出包含此標籤的所有題目
-        const relatedItems = db.filter(item => item.tags && item.tags.includes(tagName));
-        
-        // 3. 收集這些題目身上的「其他標籤」
-        const tagsToSelect = new Set();
-        relatedItems.forEach(item => {
-            item.tags.forEach(t => tagsToSelect.add(t));
-        });
+        init();
+        animate();
 
-        // 4. 遍歷畫面上的複選框
-        const allCheckboxes = document.querySelectorAll('#filter-container input[type="checkbox"]');
-        allCheckboxes.forEach(cb => {
-            const targetTag = cb.value;
-            
-            // 5. 判斷「目標標籤」屬於哪個分類
-            const targetCategory = getTagCategory(targetTag);
+function init() {
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 2800; // 攝影機距離
 
-            // 6. 核心邏輯：如果「觸發者」和「目標」在同一個分類，就跳過 (不勾選)
-            // 除非是自己觸發自己 (這行其實 input change 已經處理了，但為了保險起見不阻擋自己)
-            if (sourceCategory === targetCategory && tagName !== targetTag) {
-                return; 
+            scene = new THREE.Scene();
+
+            // --- 修改處開始：設定總張數為 138 張 (讓球體變密) ---
+            const totalObjects = 128; 
+
+            for (let i = 0; i < totalObjects; i++) {
+                // 使用 % (取餘數) 來循環讀取 sportsList 的 16 筆資料
+                const item = sportsList[i % sportsList.length];
+
+                const element = document.createElement('div');
+                element.className = 'element';
+                // 讓顏色稍微有點隨機變化，才不會看起來完全一樣
+                element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
+
+                const number = document.createElement('div');
+                number.className = 'number';
+                number.textContent = (i + 1);
+                element.appendChild(number);
+
+                const icon = document.createElement('div');
+                icon.className = 'icon';
+                icon.textContent = item.icon;
+                element.appendChild(icon);
+
+                const symbol = document.createElement('div');
+                symbol.className = 'symbol';
+                symbol.textContent = item.name;
+                element.appendChild(symbol);
+
+                const details = document.createElement('div');
+                details.className = 'details';
+                details.textContent = item.detail; // 或是顯示 `Mode ${i+1}`
+                element.appendChild(details);
+
+                // 點擊事件
+                element.addEventListener('pointerdown', () => {
+                    window.location.href = `atlas.html?sport=${item.id}`;
+                });
+
+                const objectCSS = new CSS3DObject(element);
+                scene.add(objectCSS);
+                objects.push(objectCSS);
+            }
+            // --- 計算球體位置 ---
+            const vector = new THREE.Vector3();
+            const l = objects.length;
+
+            for (let i = 0; i < l; i++) {
+                const phi = Math.acos(-1 + (2 * i) / l);
+                const theta = Math.sqrt(l * Math.PI) * phi;
+                const object = new THREE.Object3D();
+                object.position.setFromSphericalCoords(600, phi, theta);
+                vector.copy(object.position).multiplyScalar(2);
+                object.lookAt(vector);
+                targets.sphere.push(object);
             }
 
-            // 7. 執行勾選
-            if (tagsToSelect.has(targetTag) && !cb.checked) {
-                cb.checked = true;
-                const label = cb.parentElement;
-                label.style.transition = "background-color 0.3s";
-                const originalBg = label.style.backgroundColor;
-                label.style.backgroundColor = "#fff59d"; 
-                setTimeout(() => { label.style.backgroundColor = originalBg; }, 500);
+            // --- 渲染器 ---
+            renderer = new CSS3DRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            // --- 控制器 ---
+            controls = new TrackballControls(camera, renderer.domElement);
+            controls.minDistance = 500;
+            controls.maxDistance = 4000;
+            controls.rotateSpeed = 2.0;
+
+            transform(targets.sphere, 2000);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function transform(targets, duration) {
+            TWEEN.removeAll();
+
+            for (let i = 0; i < objects.length; i++) {
+                const object = objects[i];
+                const target = targets[i];
+
+                object.position.x = Math.random() * 4000 - 2000;
+                object.position.y = Math.random() * 4000 - 2000;
+                object.position.z = Math.random() * 4000 - 2000;
+
+                new TWEEN.Tween(object.position)
+                    .to({ x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+
+                new TWEEN.Tween(object.rotation)
+                    .to({ x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
             }
-        });
-    }
 
-
-    // --- 6. NAVIGATION ---
-    function switchScreen(id) {
-        ['screen-home', 'screen-settings', 'screen-quiz', 'screen-result'].forEach(s => 
-            document.getElementById(s).classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-        
-        const fab = document.getElementById('fab-mistakes');
-        const footer = document.getElementById('main-footer');
-        if (id === 'screen-home') { fab.classList.remove('hidden'); footer.classList.remove('hidden'); }
-        else { fab.classList.add('hidden'); footer.classList.add('hidden'); }
-    }
-
-    function selectTime(sec) {
-        const checked = document.querySelectorAll('#filter-container input:checked');
-        if (checked.length === 0) { alert("請至少選擇一個標籤！"); return; }
-        const selectedTags = Array.from(checked).map(c => c.value);
-        currentPool = db.filter(item => {
-            if(!item.tags) return false;
-            return item.tags.some(t => selectedTags.includes(t));
-        });
-        if (currentPool.length < 2) { alert("符合條件的題目太少 (至少需2題)。"); return; }
-        config.time = sec; config.review = false; switchScreen('screen-settings');
-    }
-    function startReviewMode() {
-        if (mistakes.length === 0) return;
-        currentPool = [...mistakes];
-        config.time = -1; config.review = true; closeMistakesModal(); switchScreen('screen-settings');
-    }
-    function goHome() { stopAllTimers(); window.speechSynthesis.cancel(); switchScreen('screen-home'); loadData(); }
-
-    function startGame(lang) {
-        config.lang = lang;
-        config.dictation = document.getElementById('dictation-toggle').checked;
-        config.passive = document.getElementById('passive-toggle').checked;
-
-        gameState.score = 0; gameState.count = 0; gameState.active = true; gameState.isPaused = false; gameState.total = currentPool.length;
-        document.getElementById('score-display').innerText = "✅ 0";
-        document.getElementById('progress-bar-fill').style.width = "0%";
-        
-        const badge = document.getElementById('mode-badge');
-        const pauseBtn = document.getElementById('pause-btn');
-        if (config.passive) {
-            badge.innerText = "🎧 Auto"; badge.style.background = "#FFE0B2";
-            pauseBtn.classList.remove('hidden');
-            pauseBtn.innerText = "⏸️";
-        } else {
-            badge.innerText = config.dictation ? "👂 Blind" : "🖐️ Manual";
-            badge.style.background = "#eee";
-            pauseBtn.classList.add('hidden');
+            new TWEEN.Tween(this)
+                .to({}, duration * 2)
+                .onUpdate(render)
+                .start();
         }
 
-        if (config.time > 0) { gameState.timeLeft = config.time; startTimer(); }
-        else document.getElementById('timer-display').innerText = "∞";
-
-        switchScreen('screen-quiz');
-        nextQ();
-    }
-
-    // --- 7. PAUSE LOGIC ---
-    function togglePause() {
-        if (!config.passive) return;
-        gameState.isPaused = !gameState.isPaused;
-        const btn = document.getElementById('pause-btn');
-        
-        if (gameState.isPaused) {
-            btn.innerText = "▶️";
-            clearTimeout(timers.auto);
-            clearTimeout(timers.passive);
-            clearInterval(timers.game); 
-            window.speechSynthesis.cancel();
-        } else {
-            btn.innerText = "⏸️";
-            if (config.time > 0) startTimer();
-            const isAnswerRevealed = document.getElementById('feedback-area').style.display === 'block';
-            if (isAnswerRevealed) {
-                timers.auto = setTimeout(() => nextQ(), 2000); 
-            } else {
-                const target = Array.from(document.querySelectorAll('.option-btn')).find(b => b.dataset.id === currentQ.id);
-                if (target) check(currentQ, target, true);
-            }
-        }
-    }
-
-    // --- 8. GAME LOGIC ---
-    function nextQ() {
-        if (!gameState.active) return;
-        if (gameState.isPaused) return;
-
-        if (config.review && currentPool.length === 0) { endGame(false); return; }
-
-        clearTimeout(timers.auto); clearTimeout(timers.passive);
-        document.getElementById('feedback-area').style.display = 'none';
-        document.getElementById('next-btn').classList.add('hidden');
-
-        const idx = Math.floor(Math.random() * currentPool.length);
-        currentQ = currentPool[idx];
-        gameState.count++;
-        document.getElementById('progress-text').innerText = `Q: ${gameState.count} / ${gameState.total}`;
-        
-        const img = document.getElementById('question-img');
-        img.src = currentQ.img;
-        img.onerror = () => img.src = "https://placehold.co/600x400?text=Error";
-        
-        if (config.dictation) {
-            img.classList.add('blur-img');
-            setTimeout(playFullSequence, 600); 
-        } else {
-            img.classList.remove('blur-img');
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render();
         }
 
-        let opts = [currentQ];
-        let others = db.filter(x => x.id !== currentQ.id);
-        while (opts.length < 4 && others.length > 0) {
-            let r = others.splice(Math.floor(Math.random() * others.length), 1)[0];
-            opts.push(r);
-        }
-        opts.sort(() => Math.random() - 0.5);
-
-        const con = document.getElementById('options-container'); con.innerHTML = '';
-        opts.forEach(o => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerHTML = config.lang === 'zh' 
-                ? `<b>${o.name_zh}</b> <small style="color:#888">${o.name_en}</small>`
-                : `<b>${o.name_en}</b> <small style="color:#888">${o.name_zh}</small>`;
-            btn.onclick = () => check(o, btn);
-            btn.dataset.id = o.id;
-            con.appendChild(btn);
-        });
-
-        if (config.passive) {
-            document.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = 'none');
-            if (!config.dictation) playFullSequence();
-            
-            timers.passive = setTimeout(() => {
-                if(gameState.isPaused) return;
-                const target = Array.from(document.querySelectorAll('.option-btn')).find(b => b.dataset.id === currentQ.id);
-                if (target) check(currentQ, target, true);
-            }, 4000); 
-        }
-    }
-
-    function check(sel, btn, isAuto = false) {
-        if (config.dictation) document.getElementById('question-img').classList.remove('blur-img');
-
-        const isCorrect = sel.id === currentQ.id;
-        document.querySelectorAll('.option-btn').forEach(b => {
-            if (b.dataset.id === currentQ.id) b.classList.add('correct');
-            else b.disabled = true;
-        });
-
-        if (!isAuto) {
-            if (isCorrect) {
-                gameState.score++; btn.classList.add('correct');
-                if (config.review) {
-                    currentPool = currentPool.filter(x => x.id !== currentQ.id);
-                    mistakes = mistakes.filter(x => x.id !== currentQ.id);
-                    saveMistakes();
-                }
-            } else {
-                btn.classList.add('wrong');
-                if (!config.review && !mistakes.some(x => x.id === currentQ.id)) {
-                    mistakes.push(currentQ); saveMistakes();
-                }
-            }
+        function animate() {
+            requestAnimationFrame(animate);
+            TWEEN.update();
+            controls.update();
+            scene.rotation.y += 0.001; 
+            render();
         }
 
-        document.getElementById('score-display').innerText = `✅ ${gameState.score}`;
-        const pct = config.review ? 0 : Math.min((gameState.score / gameState.count) * 100, 100);
-        document.getElementById('progress-bar-fill').style.width = pct + "%";
-
-        const fb = document.getElementById('feedback-area');
-        const title = document.getElementById('fb-title');
-        const content = document.getElementById('fb-content');
-        
-        fb.className = (isCorrect || isAuto) ? 'feedback success' : 'feedback error';
-        title.innerText = isAuto ? "🎧 Auto Reveal" : (isCorrect ? "✅ Correct" : "❌ Incorrect");
-        
-        // --- 顯示圖片來源 (NEW) ---
-        let sourceHtml = '';
-        if (currentQ.img_source) {
-            sourceHtml = `<div style="font-size:0.75rem; color:#999; margin-top:8px; border-top:1px dashed #eee; padding-top:5px;">
-                ${currentQ.img_source}
-            </div>`;
+        function render() {
+            renderer.render(scene, camera);
         }
-        // -------------------------
-
-        let tagsHtml = '';
-        if(currentQ.tags && Array.isArray(currentQ.tags)) {
-            tagsHtml = '<div style="margin-top:5px;">' + currentQ.tags.map(t => `<span class="tag-pill">${t}</span>`).join('') + '</div>';
-        }
-
-        const displayDesc = config.lang === 'zh' ? (currentQ.desc || "") : (currentQ.desc_en || currentQ.desc || "");
-
-        content.innerHTML = `
-            <b>${currentQ.name_zh}</b><br>
-            <span style="color:var(--primary)">${currentQ.name_en}</span><br>
-            <small style="display:block; margin-top:5px; line-height:1.4;">${displayDesc}</small>
-            ${tagsHtml}
-            ${sourceHtml}
-        `;
-        fb.style.display = 'block';
-
-        const onAudioFinished = () => {
-            if (config.passive && !gameState.isPaused) {
-                timers.auto = setTimeout(() => {
-                    if(!gameState.isPaused) nextQ();
-                }, 2000); 
-            }
-        };
-
-        playFullSequence(true, onAudioFinished);
-
-        if (!config.passive) {
-            document.getElementById('next-btn').classList.remove('hidden');
-        }
-    }
-
-    function forceNext() {
-        if (gameState.isPaused) return;
-        window.speechSynthesis.cancel();
-        clearTimeout(timers.auto);
-        clearTimeout(timers.passive);
-        nextQ();
-    }
-
-    function endGame(fromTimer = false) {
-        gameState.active = false;
-        stopAllTimers();
-        window.speechSynthesis.cancel();
-        switchScreen('screen-result');
-        document.getElementById('final-score').innerText = gameState.score;
-    }
-
-    // --- 9. AUDIO LOGIC ---
-   function playFullSequence(includeDesc = false, onComplete = null) {
-        if (!currentQ || gameState.isPaused) return;
-        window.speechSynthesis.cancel();
-
-        const parts = [];
-        
-        if (config.lang === 'zh') {
-            parts.push({ text: currentQ.name_zh, lang: 'zh-TW' });
-            parts.push({ text: currentQ.name_en, lang: 'en-US' });
-            if (includeDesc) parts.push({ text: currentQ.desc, lang: 'zh-TW' });
-        } else {
-            parts.push({ text: currentQ.name_en, lang: 'en-US' });
-            parts.push({ text: currentQ.name_zh, lang: 'zh-TW' });
-            if (includeDesc) parts.push({ text: currentQ.desc_en || currentQ.desc, lang: 'en-US' });
-        }
-
-        speakNext(parts, 0, onComplete);
-    }
-
-    function speakNext(parts, index, onComplete) {
-        if (index >= parts.length) {
-            if (onComplete) onComplete(); 
-            return;
-        }
-        if (gameState.isPaused) return;
-
-        const p = parts[index];
-        const u = new SpeechSynthesisUtterance(p.text);
-        u.lang = p.lang;
-        u.rate = 0.9; 
-
-        u.onend = () => {
-            if (!gameState.isPaused) speakNext(parts, index + 1, onComplete);
-        };
-        window.speechSynthesis.speak(u);
-    }
-
-    // --- 10. UTILITIES ---
-    function startTimer() {
-        updateTimer();
-        timers.game = setInterval(() => {
-            if(gameState.isPaused) return;
-            gameState.timeLeft--;
-            updateTimer();
-            if (gameState.timeLeft <= 0) endGame(true);
-        }, 1000);
-    }
-    function updateTimer() {
-        const m = Math.floor(gameState.timeLeft / 60).toString().padStart(2, '0');
-        const s = (gameState.timeLeft % 60).toString().padStart(2, '0');
-        document.getElementById('timer-display').innerText = `${m}:${s}`;
-    }
-    function stopAllTimers() {
-        clearInterval(timers.game); clearTimeout(timers.auto); clearTimeout(timers.passive);
-    }
-    function saveMistakes() {
-        localStorage.setItem('anatomy_mistakes_v68', JSON.stringify(mistakes));
-        updateBadge();
-    }
-    function updateBadge() {
-        const b = document.getElementById('mistake-badge');
-        b.innerText = mistakes.length;
-        b.style.display = mistakes.length > 0 ? 'inline-block' : 'none';
-    }
-
-    // --- 11. IMPORT/EXPORT ---
-    function switchTab(id) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        const tabs = document.querySelectorAll('.tab');
-        if(id === 'tab-json') tabs[0].classList.add('active');
-        if(id === 'tab-file') tabs[1].classList.add('active');
-        if(id === 'tab-url') tabs[2].classList.add('active');
-        document.getElementById(id).classList.add('active');
-    }
-    function importFromText() {
-        try { const data = JSON.parse(document.getElementById('import-text').value); processNewData(data); } catch(e) { alert("JSON Error: " + e.message); }
-    }
-    function importFromFile() {
-        const input = document.getElementById('file-input');
-        if (!input.files[0]) { alert("Please select a file."); return; }
-        const reader = new FileReader();
-        reader.onload = function(e) { try { processNewData(JSON.parse(e.target.result)); } catch(err) { alert("File Parse Error: " + err.message); } };
-        reader.readAsText(input.files[0]);
-    }
-    async function importFromUrl() {
-        const url = document.getElementById('url-input').value;
-        if (!url) { alert("Please enter a URL."); return; }
-        try { const res = await fetch(url); if (!res.ok) throw new Error("Network error"); processNewData(await res.json()); } catch(e) { alert("Fetch Error: " + e.message); }
-    }
-    function processNewData(data) {
-        if (!Array.isArray(data) || !data[0].name_zh) { alert("Format Error!"); return; }
-        data.forEach(item => { if (!item.tags && item.cat) item.tags = [item.cat]; });
-        db = data;
-        localStorage.setItem('anatomy_db_v68', JSON.stringify(db));
-        alert(`成功匯入 ${db.length} 筆資料！`);
-        renderCategorizedFilters(); closeImportModal();
-        document.getElementById('import-text').value = JSON.stringify(db, null, 2);
-    }
-    function resetData() {
-        if (confirm("Reset to defaults?")) {
-            db = JSON.parse(JSON.stringify(defaultData));
-            localStorage.removeItem('anatomy_db_v68');
-            renderCategorizedFilters(); alert("Restored default data.");
-            closeImportModal(); document.getElementById('import-text').value = JSON.stringify(db, null, 2);
-        }
-    }
-    function openImportModal() { document.getElementById('import-modal').style.display = 'flex'; }
-    function closeImportModal() { document.getElementById('import-modal').style.display = 'none'; }
-    function openMistakesModal() {
-        const div = document.getElementById('mistakes-list'); div.innerHTML = '';
-        if (mistakes.length === 0) div.innerHTML = '<p style="color:#888; text-align:center;">No mistakes yet.</p>';
-        else {
-            mistakes.forEach(m => {
-                const d = document.createElement('div'); d.style.borderBottom = '1px solid #eee'; d.style.padding='8px 0';
-                d.innerHTML = `<strong style="color:var(--error)">${m.name_zh}</strong> (${m.name_en})<br><small>${m.desc}</small>`;
-                div.appendChild(d);
-            });
-        }
-        document.getElementById('mistake-modal').style.display = 'flex';
-    }
-    function closeMistakesModal() { document.getElementById('mistake-modal').style.display = 'none'; }
-</script>
+    </script>
 </body>
 </html>
